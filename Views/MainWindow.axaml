@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CreatingSchedule.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CreatingSchedule.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Width="1080" Height="700" Background="#1E1E1E" Foreground="White"
+        Title="CreatingSchedule">
+    
+        <Window.DataContext>
+                <vm:MainWindowViewModel/>
+        </Window.DataContext>
+        
+        <DockPanel Margin="20">
+        <!-- верхняя панель управления -->
+        <StackPanel Orientation="Horizontal"
+                    DockPanel.Dock="Top"
+                    Spacing="15"
+                    Margin="0 0 0 20"
+                    VerticalAlignment="Top">
+            <TextBlock Text="Популяция:"
+                       VerticalAlignment="Center"/>
+            <NumericUpDown Minimum="10"
+                           Maximum="1000"
+                           Width="100"
+                           Value="{Binding PopulationSize}"/>
+            
+            <TextBlock Text="Поколения:"
+                       VerticalAlignment="Center"/>
+            <NumericUpDown Minimum="10"
+                           Maximum="2000"
+                           Width="100"
+                           Value="{Binding Generations}"/>
+            
+            <TextBlock Text="Мутации:"
+                       VerticalAlignment="Center"/>
+            <NumericUpDown Minimum="0"
+                           Maximum="1"
+                           Increment="0.05"
+                           Width="100"
+                           Value="{Binding MutationRate}"/>
+            
+            <Button Content="Сгенерировать"
+                    Command="{Binding GenerateScheduleCommand}"
+                    Width="180"
+                    Background="#333"
+                    Foreground="White"/>
+        </StackPanel>
+        </DockPanel>
+
+</Window>
