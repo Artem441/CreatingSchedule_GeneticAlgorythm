@@ -1,7 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using CreatingSchedule.Models;
 using CreatingSchedule.Services;
 using System.Collections.Generic;
+using System.Linq;
+using Avalonia.Metadata;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -10,82 +13,59 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace CreatingSchedule.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly List<Teacher> _teachers = new()
-    {
-        new Teacher("Ivanov"),
-        new Teacher("Sobytilkin"),
-        new Teacher("Michael"),
-        new Teacher("Anastasia"),
-    };
-
-    private readonly List<Classroom> _classrooms = new()
-    {
-        new Classroom("Aуд. 104"),
-        new Classroom("Aуд. 106"),
-        new Classroom("Aуд. 108"),
-    };
-
-    private readonly List<Subject> _subjects;
-
-    private GeneticSheduler? _scheduler;
-
-    public ObservableCollection<ScheduleEntry> ScheduleEntries { get; set; } = new();
-
-    private int _populationSize = 200;
-
-    public int PopulationSize
-    {
-        get => _populationSize;
-        set => SetProperty(ref _populationSize, value);
-    }
-
-    private int _generations = 1000;
-
-    public int Generations
-    {
-        get => _generations;
-        set => SetProperty(ref _generations, value);
-    }
-
-    private double _multionRate = 0.3;
-
-    public double MutationRate
-    {
-        get => _multionRate;
-        set => SetProperty(ref _multionRate, value);
-    }
+    public ObservableCollection<Teacher> Teachers { get; set; } = new();
+    public ObservableCollection<Classroom> Classrooms { get; set; } = new();
+    public ObservableCollection<Subject> Subjects { get; set; } = new();
+    public ObservableCollection<Group> Groups { get; set; } = new();
+    public ObservableCollection<string> GroupNames { get; set; } = new();
+    public ObservableCollection<ScheduleEntry> ScheduleForSelectesGroup { get; set; } = new();
     
-    public IRelayCommand GenerateScheduleCommand { get; }
+    private GeneticSheduler? _generatedSchedule;
+
+    [ObservableProperty] private int populationSize = 300;
+    [ObservableProperty] private int generations = 2000;
+    [ObservableProperty] private double mutationRate = 0.3;
+    [ObservableProperty] private Group? selectedGroup;
+
     public MainWindowViewModel()
     {
-        _subjects = new List<Subject>()
+        // Инициализация по умолчанию(вроде если в меню ничего не указать)
+        for (int i = 1; i <= 10; i++)
         {
-            new Subject("Математический Анализ",5,_teachers[0]),
-            new Subject("Физика",4,_teachers[1]),
-            new Subject("ОАИП",4,_teachers[2]),
-            new Subject("Пргограммирование",3,_teachers[3])
-        };
-        GenerateScheduleCommand = new RelayCommand(GenerateSchedule);
+            var teacher = new Teacher($"Teacher {i}");
+            Teachers.Add(teacher);
+            Subjects.Add(new Subject($"Subject {i}", 2, teacher));
+        }
+
+        for (int i = 1; i <= 5; i++)
+        {
+            Groups.Add(new Group($"Group {i}"));
+        }
+
+        Classrooms.Add(new Classroom("104"));
+        Classrooms.Add(new Classroom("106"));
+        Classrooms.Add(new Classroom("108"));
+        Classrooms.Add(new Classroom("320"));
     }
 
+    [RelayCommand]
     private void GenerateSchedule()
     {
-        _scheduler = new GeneticSheduler(_subjects,_teachers,_classrooms)
+        _generatedSchedule = new GeneticSheduler(Subjects.ToList(), Teachers.ToList(), Classrooms.ToList(), Groups.ToList())
         {
             PopulationSize = PopulationSize,
             Generation = Generations,
             MutationRate = MutationRate
         };
 
-        var bestSchedule = _scheduler.Run();
+        var bestSchedule = _generatedSchedule.Run();
         
-        ScheduleEntries.Clear();
-        foreach (var entry in bestSchedule.Entries)
+        ScheduleForSelectesGroup.Clear();
+        foreach (var entry in bestSchedule.Entries) 
         {
-            ScheduleEntries.Add(entry);
+            ScheduleForSelectesGroup.Add(entry);
         }
     }
-    
 }

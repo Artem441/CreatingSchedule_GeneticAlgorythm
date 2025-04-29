@@ -8,47 +8,69 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Width="1080" Height="700" Background="#1E1E1E" Foreground="White"
-        Title="CreatingSchedule">
+        Title="Генератор расписания">
     
-        <Window.DataContext>
-                <vm:MainWindowViewModel/>
-        </Window.DataContext>
-        
-        <DockPanel Margin="20">
-        <!-- верхняя панель управления -->
-        <StackPanel Orientation="Horizontal"
-                    DockPanel.Dock="Top"
-                    Spacing="15"
-                    Margin="0 0 0 20"
-                    VerticalAlignment="Top">
-            <TextBlock Text="Популяция:"
-                       VerticalAlignment="Center"/>
-            <NumericUpDown Minimum="10"
-                           Maximum="1000"
-                           Width="100"
-                           Value="{Binding PopulationSize}"/>
-            
-            <TextBlock Text="Поколения:"
-                       VerticalAlignment="Center"/>
-            <NumericUpDown Minimum="10"
-                           Maximum="2000"
-                           Width="100"
-                           Value="{Binding Generations}"/>
-            
-            <TextBlock Text="Мутации:"
-                       VerticalAlignment="Center"/>
-            <NumericUpDown Minimum="0"
-                           Maximum="1"
-                           Increment="0.05"
-                           Width="100"
-                           Value="{Binding MutationRate}"/>
-            
-            <Button Content="Сгенерировать"
-                    Command="{Binding GenerateScheduleCommand}"
-                    Width="180"
-                    Background="#333"
-                    Foreground="White"/>
-        </StackPanel>
-        </DockPanel>
+         <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#2A2A3C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="8"/>
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#2A2A3C"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#2A2A3C"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
 
+    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="300,*">
+        <!-- Левая панель -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="15" Spacing="10">
+            <TextBlock Text="Параметры алгоритма" FontSize="20" FontWeight="Bold" />
+            
+            <TextBlock Text="Популяция:" />
+            <NumericUpDown Minimum="10" Maximum="1000" Value="{Binding PopulationSize}" />
+
+            <TextBlock Text="Поколения:" />
+            <NumericUpDown Minimum="100" Maximum="5000" Value="{Binding Generations}" />
+
+            <TextBlock Text="Мутации:" />
+            <Slider Minimum="0.0" Maximum="1.0" Value="{Binding MutationRate}" TickFrequency="0.05" />
+
+            <Button Content="Генерировать" Command="{Binding GenerateScheduleCommand}" />
+            <Button Content="Сброс" Command="{Binding ResetCommand}" />
+
+            <TextBlock Text="Добавление преподавателя / предмета" FontSize="16" Margin="0,20,0,5" />
+            <TextBox Watermark="ФИО преподавателя" Text="{Binding NewTeacherName}" />
+            <TextBox Watermark="Предмет" Text="{Binding NewSubjectName}" />
+            <Button Content="Добавить" Command="{Binding AddTeacherSubjectCommand}" />
+
+            <TextBlock Text="Добавление аудитории" FontSize="16" Margin="0,20,0,5" />
+            <TextBox Watermark="Номер аудитории" Text="{Binding NewClassroomName}" />
+            <Button Content="Добавить" Command="{Binding AddClassroomCommand}" />
+        </StackPanel>
+
+        <!-- Правая панель -->
+        <StackPanel Grid.Column="1" Margin="15" Spacing="10">
+            <TextBlock Text="Расписание" FontSize="20" FontWeight="Bold" />
+            
+            <ComboBox Items="{Binding GroupNames}" SelectedItem="{Binding SelectedGroup}" />
+            
+            <DataGrid Items="{Binding ScheduleForSelectedGroup}" AutoGenerateColumns="False" CanUserResizeColumns="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Предмет" Binding="{Binding Subject.Name}" />
+                    <DataGridTextColumn Header="Преподаватель" Binding="{Binding Teacher.Name}" />
+                    <DataGridTextColumn Header="Аудитория" Binding="{Binding Classroom.Name}" />
+                    <DataGridTextColumn Header="День" Binding="{Binding DayOfWeek}" />
+                    <DataGridTextColumn Header="Пара" Binding="{Binding TimeSlot}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Grid>
 </Window>

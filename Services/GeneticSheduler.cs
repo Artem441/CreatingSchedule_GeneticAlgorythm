@@ -10,6 +10,7 @@ public class GeneticSheduler
     private readonly List<Subject> _subjects;
     private readonly List<Teacher> _teachers;
     private readonly List<Classroom> _classrooms;
+    private readonly List<Group> _groups;
     private readonly Random _random = new Random();
     
     // settings of Genetic Algorithm
@@ -18,9 +19,10 @@ public class GeneticSheduler
     public double MutationRate { get; set; } = 0.3;
     public int ElitismCount { get; set; } = 75;
 
-    public GeneticSheduler(List<Subject> subjects, List<Teacher> teachers, List<Classroom> classrooms)
+    public GeneticSheduler(List<Subject> subjects, List<Teacher> teachers, List<Classroom> classrooms, List<Group> groups)
     {
         _subjects = subjects;
+        _groups = groups;
         _teachers = teachers;
         _classrooms = classrooms;
     }
@@ -62,7 +64,7 @@ public class GeneticSheduler
                         Teacher = subject.AssingedTeacher,
                         Classroom = _classrooms[_random.Next(_classrooms.Count)],
                         DayOfWeek = _random.Next(5),
-                        TimeSlots = _random.Next(4)
+                        TimeSlot = _random.Next(4)
                     });
                 }
             }
@@ -124,7 +126,7 @@ public class GeneticSheduler
         {
             case 0:
                 entry.DayOfWeek = _random.Next(5);
-                entry.TimeSlots = _random.Next(4);
+                entry.TimeSlot = _random.Next(4);
                 break;
             case 1:
                 entry.Classroom = _classrooms[_random.Next(_classrooms.Count)];

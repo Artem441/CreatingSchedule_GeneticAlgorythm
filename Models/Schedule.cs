@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,30 +10,23 @@ public class Schedule
 
     public double CalculateFitness()
     {
-        double fitness = 0;
+        double fitness = 100;
 
-        fitness += CheckConflicts();
-        fitness += CheckWindows();
-        fitness += CheckDistribution();
+        fitness -= CheckTeacherConflicts();
+        fitness -= CheckClassroomConflicts();
+        fitness -= CheckTeacherOverwork() * 2;
+        fitness -= CheckStudentOverwork() * 2;
+        fitness -= CheckWindows() * 2;
+        fitness += CheckDistribution(); // Bonus
         
-        return fitness;             
+        return Math.Max(0,fitness);
     }
 
-    private int CheckConflicts()
-    {
-        int penalty = 0;
-
-        foreach (var group in Entries.GroupBy(e => new { e.DayOfWeek, e.TimeSlots }))
-        {
-            var teachers = group.Select(e => e.Teacher).Distinct().ToList();
-            if (teachers.Count < group.Count())
-            {
-                penalty -= 10; // наказание если у учителя несколько пар одновременно
-            }
-        }
-        return penalty;
-    }
-
+    private int CheckTeacherConflicts() => Entries.GroupBy(e => new { e.Teacher, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 1);
+    private int CheckClassroomConflicts() => Entries.GroupBy(e => new { e.Classroom, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 1);
+    private int CheckTeacherOverwork() => Entries.GroupBy(e => new { e.Teacher, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 4);
+    private int CheckStudentOverwork() => Entries.GroupBy(e => new { e.Group, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 4);
+    
     private int CheckWindows()
     {
         int penalty = 0;
@@ -41,12 +35,12 @@ public class Schedule
 
         foreach (var day in grouped)
         {
-            var slots = day.Select(e => e.TimeSlots).OrderBy(t => t).ToList();
+            var slots = day.Select(e => e.TimeSlot).OrderBy(t => t).ToList();
             for (int i = 1; i < slots.Count; i++)
             {
                 if (slots[i] - slots[i - 1] > 1)
                 {
-                    penalty -= 5; // штраф за перерыв между парами(окна)
+                    penalty++; // штраф за перерыв между парами(окна)
                 }
             }
         }

@@ -65,3 +65,4 @@
 /Users/artembelcikova/Documents/453501/ОАиП_2/CourseWork/CreatingSchedule/obj/Debug/net9.0/Creating.1E5DDE3C.Up2Date
 /Users/artembelcikova/Documents/453501/ОАиП_2/CourseWork/CreatingSchedule/obj/Debug/net9.0/CreatingSchedule.genruntimeconfig.cache
 /Users/artembelcikova/Documents/453501/ОАиП_2/CourseWork/CreatingSchedule/obj/Debug/net9.0/ref/CreatingSchedule.dll
+/Users/artembelcikova/Documents/453501/ОАиП_2/CourseWork/CreatingSchedule/obj/Debug/net9.0/CreatingSchedule.sourcelink.json

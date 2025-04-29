@@ -3,7 +3,6 @@
              x:Class="CreatingSchedule.App"
              xmlns:local="using:CreatingSchedule"
              RequestedThemeVariant="Dark">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
