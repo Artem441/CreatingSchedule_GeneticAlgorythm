@@ -38,7 +38,7 @@ public class GeneticSheduler
             var bestFitness = population.Max(s => s.CalculateFitness());
             Console.WriteLine($"Поколение {generation}: Лучший фитнес = {bestFitness:F2}");
 
-            if (bestFitness > 90) // достижение цели(оптимальное расписание из поставленных условий)
+            if (bestFitness > 99) // достижение цели(оптимальное расписание из поставленных условий)
             {
                 break;
             }
@@ -46,30 +46,35 @@ public class GeneticSheduler
         return population.OrderByDescending(s => s.CalculateFitness()).First();
     }
 
-    private List<Schedule> InitializePopulation()   
+    private List<Schedule> InitializePopulation()
     {
         var population = new List<Schedule>();
-
+        
         for (int i = 0; i < PopulationSize; i++)
         {
             var schedule = new Schedule();
-
-            foreach (var subject in _subjects)
+            
+            foreach (var group in _groups)
             {
-                for (int j = 0; j < subject.HoursPerWeek; j++)
+                foreach (var subject in _subjects)
                 {
-                    schedule.Entries.Add(new ScheduleEntry
+                    for (int j = 0; j < subject.HoursPerWeek; j++)
                     {
-                        Subject = subject,
-                        Teacher = subject.AssingedTeacher,
-                        Classroom = _classrooms[_random.Next(_classrooms.Count)],
-                        DayOfWeek = _random.Next(5),
-                        TimeSlot = _random.Next(4)
-                    });
+                        schedule.Entries.Add(new ScheduleEntry
+                        {
+                            Subject = subject,
+                            Teacher = subject.AssingedTeacher,
+                            Classroom = _classrooms[_random.Next(_classrooms.Count)],
+                            Group = group,
+                            DayOfWeek = _random.Next(5),
+                            TimeSlot = _random.Next(6)
+                        });
+                    }
                 }
             }
             population.Add(schedule);
         }
+
         return population;
     }
 

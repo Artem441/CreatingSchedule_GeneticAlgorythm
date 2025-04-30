@@ -57,12 +57,12 @@
         </StackPanel>
 
         <!-- Правая панель -->
-        <StackPanel Grid.Column="1" Margin="15" Spacing="10">
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="15" Spacing="10">
             <TextBlock Text="Расписание" FontSize="20" FontWeight="Bold" />
-            
-            <ComboBox Items="{Binding GroupNames}" SelectedItem="{Binding SelectedGroup}" />
-            
-            <DataGrid Items="{Binding ScheduleForSelectedGroup}" AutoGenerateColumns="False" CanUserResizeColumns="True">
+    
+            <ComboBox ItemsSource = "{Binding GroupNames}" SelectedItem="{Binding SelectedGroup}" />
+
+            <DataGrid ItemsSource="{Binding ScheduleForSelectedGroup}" AutoGenerateColumns="False" CanUserResizeColumns="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Предмет" Binding="{Binding Subject.Name}" />
                     <DataGridTextColumn Header="Преподаватель" Binding="{Binding Teacher.Name}" />

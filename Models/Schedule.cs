@@ -12,12 +12,12 @@ public class Schedule
     {
         double fitness = 100;
 
-        fitness -= CheckTeacherConflicts();
-        fitness -= CheckClassroomConflicts();
-        fitness -= CheckTeacherOverwork() * 2;
-        fitness -= CheckStudentOverwork() * 2;
-        fitness -= CheckWindows() * 2;
-        fitness += CheckDistribution(); // Bonus
+        fitness -= CheckTeacherConflicts() * 7;
+        fitness -= CheckClassroomConflicts() * 7;
+        fitness -= CheckTeacherOverwork() * 7;
+        fitness -= CheckStudentOverwork() * 7;
+        fitness -= CheckWindows() * 7;
+        //fitness += CheckDistribution(); // Bonus
         
         return Math.Max(0,fitness);
     }
@@ -57,7 +57,7 @@ public class Schedule
         {
             if (count >= avg - 1 && count <= avg + 1)
             {
-                score += 2; // Плюс за равномерное распределение нагрузки
+                score += 1; // Плюс за равномерное распределение нагрузки
             }
         }
         return score;
