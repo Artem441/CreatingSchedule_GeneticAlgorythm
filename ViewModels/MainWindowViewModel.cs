@@ -34,6 +34,7 @@ public partial class MainWindowViewModel : ViewModelBase
     
     
     private GeneticSheduler? _generatedSchedule;
+    private Schedule? _finalSchedule;
 
     [ObservableProperty]
     private int populationSize = 300;
@@ -64,7 +65,7 @@ public partial class MainWindowViewModel : ViewModelBase
             Classrooms.Add(new Classroom($"Classroom {i}"));
         }
         SelectedGroup = Groups.First().Name;
-        GenerateSchedule();
+        //GenerateSchedule(); если поставить то долго открываетсяч приложение
     }
 
     [RelayCommand]
@@ -77,7 +78,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 MutationRate = MutationRate
             };
 
-        _generatedSchedule.Run(); // Прогоняем только 1 раз, кешируем данные
+        _finalSchedule = _generatedSchedule.Run();
         UpdateScheduleForGroup(); // Заполняем расписание для выбранной группы
     }
 
@@ -118,10 +119,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void UpdateScheduleForGroup()
     {
-        if (_generatedSchedule == null || string.IsNullOrWhiteSpace(SelectedGroup)) return;
+        if (_finalSchedule == null || string.IsNullOrWhiteSpace(SelectedGroup)) return;
         
-        var entries = _generatedSchedule
-            .Run()
+        var entries = _finalSchedule
             .Entries
             .Where(e => e.Group.Name == SelectedGroup)
             .OrderBy(e => e.DayOfWeek)

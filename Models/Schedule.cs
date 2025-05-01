@@ -12,20 +12,25 @@ public class Schedule
     {
         double fitness = 100;
 
-        fitness -= CheckTeacherConflicts() * 7;
-        fitness -= CheckClassroomConflicts() * 7;
-        fitness -= CheckTeacherOverwork() * 7;
-        fitness -= CheckStudentOverwork() * 7;
-        fitness -= CheckWindows() * 7;
-        //fitness += CheckDistribution(); // Bonus
+        fitness -= CheckTeacherConflicts() * 2;
+        fitness -= CheckClassroomConflicts() * 2;
+        fitness -= CheckTeacherOverwork() * 2;
+        fitness -= CheckStudentOverwork() * 2;
+        fitness -= CheckWindows() * 2;
+        fitness -= CheckTeacherDailyLoadLimit() * 2;
+        fitness -= CheckGroupDailyLoadLimit() * 2;
+        
         
         return Math.Max(0,fitness);
     }
 
     private int CheckTeacherConflicts() => Entries.GroupBy(e => new { e.Teacher, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 1);
     private int CheckClassroomConflicts() => Entries.GroupBy(e => new { e.Classroom, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 1);
-    private int CheckTeacherOverwork() => Entries.GroupBy(e => new { e.Teacher, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 4);
-    private int CheckStudentOverwork() => Entries.GroupBy(e => new { e.Group, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 4);
+    private int CheckTeacherOverwork() => Entries.GroupBy(e => new { e.Teacher, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 1);
+    private int CheckStudentOverwork() => Entries.GroupBy(e => new { e.Group, e.DayOfWeek, e.TimeSlot }).Count(g => g.Count() > 1);
+    private int CheckGroupDailyLoadLimit() => Entries.GroupBy(e => new {e.Group,e.DayOfWeek}).Count(g => g.Count() > 5);
+    private int CheckTeacherDailyLoadLimit() => Entries.GroupBy(e => new {e.Teacher,e.DayOfWeek}).Count(g => g.Count() > 5);
+
     
     private int CheckWindows()
     {
