@@ -5,6 +5,7 @@ using CreatingSchedule.Services;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.Generic;
 
 
 
@@ -18,7 +19,9 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<Subject> Subjects { get; set; } = new();
     public ObservableCollection<Group> Groups { get; set; } = new();
     public ObservableCollection<string> GroupNames => new(Groups.Select(g => g.Name));
-    public ObservableCollection<ScheduleEntry> ScheduleForSelectedGroup { get; set; } = new();
+    public ObservableCollection<ScheduleEntry> ScheduleForSelectedGroup { get; set; } = new(); // для бизнесс логики
+    
+    public ObservableCollection<ScheduleEntry> Entries { get; set; } = new(); // для табличного отображения в UI
     
     [ObservableProperty]
     private string newTeacherName = string.Empty;
@@ -79,7 +82,7 @@ public partial class MainWindowViewModel : ViewModelBase
             };
 
         _finalSchedule = _generatedSchedule.Run();
-        UpdateScheduleForGroup(); // Заполняем расписание для выбранной группы
+        UpdateScheduleForSelectedGroup(); // Заполняем расписание для выбранной группы
     }
 
     [RelayCommand]
@@ -114,7 +117,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnSelectedGroupChanged(string value)
     {
-        UpdateScheduleForGroup();
+        if (_finalSchedule != null)
+        {
+            UpdateScheduleForSelectedGroup();
+        }
     }
 
     private void UpdateScheduleForGroup()
@@ -131,6 +137,57 @@ public partial class MainWindowViewModel : ViewModelBase
         foreach (var entry in entries)
         {
             ScheduleForSelectedGroup.Add(entry);
+        }
+    }
+    public ObservableCollection<TimeSlotScheduleViewModel> TimeSlotSchedules { get; } = new();
+    
+    public void UpdateScheduleForSelectedGroup()
+    {
+        TimeSlotSchedules.Clear();
+
+        if (_finalSchedule == null || string.IsNullOrEmpty(SelectedGroup))
+        {
+            return;
+        }
+        
+        var slotTimeSlots = new Dictionary<int, string>
+        {
+            { 0, "09:00\n-\n10.20" },
+            { 1, "10:35\n-\n11.55" },
+            { 2, "12:25\n-\n13.45" },
+            { 3, "14:00\n-\n15.20" },
+            { 4, "15:50\n-\n17.10" }
+        };
+
+        var currentGroup = Groups.FirstOrDefault(g => g.Name == SelectedGroup);
+        if (currentGroup == null) return;
+        
+        
+        foreach (var slot in slotTimeSlots)
+        {
+            var slotModel = new TimeSlotScheduleViewModel
+            {
+                TimeTable = slot.Value,
+                Monday = new List<ScheduleEntry>(),
+                Tuesday = new List<ScheduleEntry>(),
+                Wednesday = new List<ScheduleEntry>(),
+                Thursday = new List<ScheduleEntry>(),
+                Friday = new List<ScheduleEntry>(),
+            };
+            
+            var entriesInSlot = _finalSchedule.Entries.Where(e => e.Group.Name == SelectedGroup && e.TimeSlot == slot.Key).ToList();
+            foreach (var entry in entriesInSlot)
+            {
+                switch (entry.DayOfWeek)
+                {
+                    case 0: slotModel.Monday.Add(entry); break;
+                    case 1: slotModel.Tuesday.Add(entry); break;
+                    case 2: slotModel.Wednesday.Add(entry); break;
+                    case 3: slotModel.Thursday.Add(entry); break;
+                    case 4: slotModel.Friday.Add(entry); break;
+                }
+            }
+            TimeSlotSchedules.Add(slotModel);
         }
     }
 }

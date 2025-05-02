@@ -63,22 +63,122 @@
                 <TextBlock Text="Расписание" FontSize="20" FontWeight="Bold" />
                 <ComboBox ItemsSource="{Binding GroupNames}" SelectedItem="{Binding SelectedGroup}" />
 
-                <!-- Таблица расписания (Grid, т.к. DataGrid глючит) -->
-                <ItemsControl ItemsSource="{Binding ScheduleForSelectedGroup}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="#2A2A3C" Margin="0,5" Padding="6" CornerRadius="4">
-                                <Grid ColumnDefinitions="*,*,*,*,*">
-                                    <TextBlock Grid.Column="0" Text="{Binding Subject.Name}" />
-                                    <TextBlock Grid.Column="1" Text="{Binding Teacher.Name}" />
-                                    <TextBlock Grid.Column="2" Text="{Binding Classroom.Name}" />
-                                    <TextBlock Grid.Column="3" Text="{Binding DayOfWeek}" />
-                                    <TextBlock Grid.Column="4" Text="{Binding TimeSlot}" />
+                <!-- Табличное расписание -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Заголовки дней -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Пн" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Вт" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="Ср" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Чт" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="0" Grid.Column="5" Text="Пт" HorizontalAlignment="Center"/>
+
+                    <!-- Строки по слотам -->
+                    <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6" 
+                                  ItemsSource="{Binding TimeSlotSchedules}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Время пары -->
+                                    <TextBlock Grid.Column="0" Text="{Binding TimeTable}" VerticalAlignment="Top" Margin="4" />
+
+                                    <!-- Занятия в день/слот -->
+                                    <ItemsControl Grid.Column="1" ItemsSource="{Binding Monday}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#2A2A3C" Margin="2" Padding="4" CornerRadius="4">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Subject.Name}" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Teacher.Name}" FontStyle="Italic"/>
+                                                        <TextBlock Text="{Binding Classroom.Name}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <ItemsControl Grid.Column="2" ItemsSource="{Binding Tuesday}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#2A2A3C" Margin="2" Padding="4" CornerRadius="4">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Subject.Name}" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Teacher.Name}" FontStyle="Italic"/>
+                                                        <TextBlock Text="{Binding Classroom.Name}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <ItemsControl Grid.Column="3" ItemsSource="{Binding Wednesday}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#2A2A3C" Margin="2" Padding="4" CornerRadius="4">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Subject.Name}" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Teacher.Name}" FontStyle="Italic"/>
+                                                        <TextBlock Text="{Binding Classroom.Name}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <ItemsControl Grid.Column="4" ItemsSource="{Binding Thursday}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#2A2A3C" Margin="2" Padding="4" CornerRadius="4">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Subject.Name}" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Teacher.Name}" FontStyle="Italic"/>
+                                                        <TextBlock Text="{Binding Classroom.Name}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <ItemsControl Grid.Column="5" ItemsSource="{Binding Friday}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#2A2A3C" Margin="2" Padding="4" CornerRadius="4">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Subject.Name}" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Teacher.Name}" FontStyle="Italic"/>
+                                                        <TextBlock Text="{Binding Classroom.Name}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
     </Grid>

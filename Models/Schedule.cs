@@ -14,11 +14,11 @@ public class Schedule
 
         //fitness -= CheckTeacherConflicts() * 2;
        // fitness -= CheckClassroomConflicts() * 2;
-        fitness -= CheckTeacherOverwork() * 3;
-        fitness -= CheckStudentOverwork() * 3;
-        fitness -= CheckWindows() * 3;
-        fitness -= CheckTeacherDailyLoadLimit() * 3;
-        fitness -= CheckGroupDailyLoadLimit() * 3;
+        fitness -= CheckTeacherOverwork() * 2;
+        fitness -= CheckStudentOverwork() * 2;
+        fitness -= CheckWindows();
+        fitness -= CheckTeacherDailyLoadLimit() * 2;
+        fitness -= CheckGroupDailyLoadLimit() * 2;
         
         
         return Math.Max(0,fitness);
@@ -140,22 +140,54 @@ public class Schedule
     }
     private int CheckWindows()
     {
-        int penalty = 0;
+        int totalPenalty = 0;
         
-        var grouped = Entries.GroupBy(e => e.DayOfWeek);
+        Dictionary<(Group, int),List<ScheduleEntry>> scheduleByGroupAndDay = new Dictionary<(Group, int),List<ScheduleEntry>>();
 
-        foreach (var day in grouped)
+        foreach (ScheduleEntry entry in Entries)
         {
-            var slots = day.Select(e => e.TimeSlot).OrderBy(t => t).ToList();
-            for (int i = 1; i < slots.Count; i++)
+            var key = (entry.Group, entry.DayOfWeek);
+
+            if (!scheduleByGroupAndDay.ContainsKey(key))
             {
-                if (slots[i] - slots[i - 1] > 1)
-                {
-                    penalty++; // штраф за перерыв между парами(окна)
-                }
+                scheduleByGroupAndDay[key] = new List<ScheduleEntry>();
             }
+            
+            scheduleByGroupAndDay[key].Add(entry);
         }
-        return penalty;
+
+        foreach (var pair in scheduleByGroupAndDay)
+        {
+            List<ScheduleEntry> daySchedule = pair.Value;
+
+            List<int> timeSlots = new List<int>();
+
+            foreach (ScheduleEntry entry in daySchedule)
+            {
+                timeSlots.Add(entry.TimeSlot);
+            }
+            
+            timeSlots.Sort();
+
+            if (timeSlots.Count < 2)
+            {
+                continue;
+            }
+
+            for (int i = 1; i < timeSlots.Count; i++)
+            {
+                int currentSlot = timeSlots[i];
+                int PreviousSlot = timeSlots[i - 1];
+
+                if (currentSlot - PreviousSlot > 1)
+                {
+                    int windowSize = currentSlot - PreviousSlot;
+                    totalPenalty += windowSize;
+                }
+                
+            }   
+        }
+        return totalPenalty;
     }
 
     private int CheckDistribution()
