@@ -45,6 +45,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string newAssignmentSubject = string.Empty;
 
+    [ObservableProperty]
+    private bool _hasSchedule;
+
     [ObservableProperty] private int newAssignmentHours = 2;
     
     
@@ -102,6 +105,7 @@ public partial class MainWindowViewModel : ViewModelBase
             };
 
         _finalSchedule = _generatedSchedule.Run();
+        HasSchedule = _finalSchedule != null && _finalSchedule.Entries.Any();
         UpdateScheduleForSelectedGroup(); // Заполняем расписание для выбранной группы
     }
 
@@ -133,6 +137,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         ScheduleForSelectedGroup.Clear();
         _generatedSchedule = null;
+        _finalSchedule = null;
+        HasSchedule = false;
     }
 
     partial void OnSelectedGroupChanged(string value)
