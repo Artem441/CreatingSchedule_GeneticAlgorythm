@@ -26,7 +26,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public ObservableCollection<TeacherAssignment> Assignments { get; set; } = new();
     
-    //public ICommand RemoveTeachingAssignmentCommand { get; }
     
     [ObservableProperty]
     private string newTeacherName = string.Empty;
@@ -60,9 +59,17 @@ public partial class MainWindowViewModel : ViewModelBase
     
     [ObservableProperty] 
     private double mutationRate = 0.3;
-
+    public ICommand RemoveTeachingAssignmentCommand { get; }
     public MainWindowViewModel()
     {
+        RemoveTeachingAssignmentCommand = new RelayCommand<TeacherAssignment>(assignment =>
+        {
+            if (assignment != null)
+            {
+                Assignments.Remove(assignment);
+                SyncFromAssignments();
+            }
+        });
         // Инициализация по умолчанию(вроде если в меню ничего не указать)
         for (int i = 1; i <= 10; i++)
         {
@@ -218,13 +225,8 @@ public partial class MainWindowViewModel : ViewModelBase
             SyncFromAssignments();
         }
     }
-
-    [RelayCommand]
-    private void RemoveTeachingAssignment(TeacherAssignment assignment)
-    {
-        Assignments.Remove(assignment);
-        SyncFromAssignments();
-    }
+    
+    
 
     [RelayCommand]
     private void ClearTeachingAssignment()
