@@ -6,6 +6,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Generic;
+using System.Windows.Input;
 
 
 
@@ -22,6 +23,10 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<ScheduleEntry> ScheduleForSelectedGroup { get; set; } = new(); // для бизнесс логики
     
     public ObservableCollection<ScheduleEntry> Entries { get; set; } = new(); // для табличного отображения в UI
+
+    public ObservableCollection<TeacherAssignment> Assignments { get; set; } = new();
+    
+    //public ICommand RemoveTeachingAssignmentCommand { get; }
     
     [ObservableProperty]
     private string newTeacherName = string.Empty;
@@ -34,6 +39,14 @@ public partial class MainWindowViewModel : ViewModelBase
     
     [ObservableProperty]
     private string selectedGroup = string.Empty;
+    
+    [ObservableProperty]
+    private string newAssignmentTeacher = string.Empty;
+
+    [ObservableProperty]
+    private string newAssignmentSubject = string.Empty;
+
+    [ObservableProperty] private int newAssignmentHours = 2;
     
     
     private GeneticSheduler? _generatedSchedule;
@@ -188,6 +201,50 @@ public partial class MainWindowViewModel : ViewModelBase
                 }
             }
             TimeSlotSchedules.Add(slotModel);
+        }
+    }
+
+    [RelayCommand]
+    private void AddTeacherAssignment()
+    {
+        if (!string.IsNullOrWhiteSpace(NewAssignmentTeacher) && !string.IsNullOrWhiteSpace(NewAssignmentSubject) &&
+            NewAssignmentHours > 0)
+        {
+            Assignments.Add(new TeacherAssignment(NewAssignmentTeacher,NewAssignmentSubject,NewAssignmentHours));
+            NewAssignmentTeacher = string.Empty;
+            NewAssignmentSubject = string.Empty;
+            NewAssignmentHours = 2;
+
+            SyncFromAssignments();
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveTeachingAssignment(TeacherAssignment assignment)
+    {
+        Assignments.Remove(assignment);
+        SyncFromAssignments();
+    }
+
+    [RelayCommand]
+    private void ClearTeachingAssignment()
+    {
+        Assignments.Clear();
+        SyncFromAssignments();
+    }
+    
+    private void SyncFromAssignments()
+    {
+        Teachers.Clear();
+        Subjects.Clear();
+
+        foreach (var assign in Assignments)
+        {
+            var teacher = new Teacher(assign.TeacherName);
+            Teachers.Add(teacher);
+            
+            var subject = new Subject(assign.SubjectName, assign.HoursPerWeek, teacher);
+            Subjects.Add(subject);
         }
     }
 }

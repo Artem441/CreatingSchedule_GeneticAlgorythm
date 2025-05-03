@@ -1,11 +1,15 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:CreatingSchedule.ViewModels"
+        xmlns:vm="clr-namespace:CreatingSchedule.ViewModels;assembly=CreatingSchedule"
         x:Class="CreatingSchedule.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Width="1080" Height="700"
         Background="#1E1E1E" Foreground="White"
         Title="Генератор расписания">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
 
     <Window.Styles>
         <Style Selector="TextBlock">
@@ -21,6 +25,10 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
         <Style Selector="TextBox">
+            <Setter Property="Background" Value="#2A2A3C"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="NumericUpDown">
             <Setter Property="Background" Value="#2A2A3C"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
@@ -46,14 +54,17 @@
                 <Button Content="Генерировать" Command="{Binding GenerateScheduleCommand}" />
                 <Button Content="Сброс" Command="{Binding ResetCommand}" />
 
-                <TextBlock Text="Добавление преподавателя / предмета" FontSize="16" Margin="0,20,0,5" />
-                <TextBox Watermark="ФИО преподавателя" Text="{Binding NewTeacherName}" />
-                <TextBox Watermark="Предмет" Text="{Binding NewSubjectName}" />
-                <Button Content="Добавить" Command="{Binding AddTeacherSubjectCommand}" />
-
                 <TextBlock Text="Добавление аудитории" FontSize="16" Margin="0,20,0,5" />
                 <TextBox Watermark="Номер аудитории" Text="{Binding NewClassroomName}" />
-                <Button Content="Добавить" Command="{Binding AddClassroomCommand}" />
+                <Button Content="Добавить аудиторию" Command="{Binding AddClassroomCommand}" />
+
+                <TextBlock Text="Добавление связки (Преподаватель + Предмет + Часы/нед)" FontSize="16" Margin="0,20,0,5" />
+                <TextBox Watermark="ФИО преподавателя" Text="{Binding NewAssignmentTeacher}" />
+                <TextBox Watermark="Предмет" Text="{Binding NewAssignmentSubject}" />
+                <NumericUpDown Minimum="1" Maximum="30" Value="{Binding NewAssignmentHours}" />
+                <Button Content="Добавить связку" Command="{Binding AddTeacherAssignmentCommand}" />
+
+                <Button Content="Очистить все связки" Command="{Binding ClearTeachingAssignmentCommand}" Margin="0,10,0,0" />
             </StackPanel>
         </ScrollViewer>
 
@@ -88,7 +99,7 @@
 
                     <!-- Строки по слотам -->
                     <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6" 
-                                  ItemsSource="{Binding TimeSlotSchedules}">
+                                ItemsSource="{Binding TimeSlotSchedules}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Grid Margin="0,2">
@@ -104,7 +115,7 @@
                                     <!-- Время пары -->
                                     <TextBlock Grid.Column="0" Text="{Binding TimeTable}" VerticalAlignment="Top" Margin="4" />
 
-                                    <!-- Занятия в день/слот -->
+                                    <!-- Понедельник -->
                                     <ItemsControl Grid.Column="1" ItemsSource="{Binding Monday}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
@@ -119,6 +130,7 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
 
+                                    <!-- Вторник -->
                                     <ItemsControl Grid.Column="2" ItemsSource="{Binding Tuesday}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
@@ -133,6 +145,7 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
 
+                                    <!-- Среда -->
                                     <ItemsControl Grid.Column="3" ItemsSource="{Binding Wednesday}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
@@ -147,6 +160,7 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
 
+                                    <!-- Четверг -->
                                     <ItemsControl Grid.Column="4" ItemsSource="{Binding Thursday}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
@@ -161,6 +175,7 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
 
+                                    <!-- Пятница -->
                                     <ItemsControl Grid.Column="5" ItemsSource="{Binding Friday}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
@@ -179,9 +194,30 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </Grid>
+
+                <!-- Блок отображения связок -->
+                <TextBlock Text="Список связок преподаватель + предмет + часы" FontSize="16" Margin="0,20,0,5" />
+                <ItemsControl ItemsSource="{Binding Assignments}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel Margin="4">
+                                <TextBlock Text="{Binding}" DockPanel.Dock="Left" />
+                                <Button Content="✖" 
+                                        Command="{Binding DataContext.RemoveTeachingAssignment, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Width="30"
+                                        Margin="10,0,0,0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="Red"
+                                        FontWeight="Bold"/>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>
 </Window>
+
 
 
