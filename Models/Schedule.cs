@@ -19,6 +19,7 @@ public class Schedule
         fitness -= CheckWindows();
         fitness -= CheckTeacherDailyLoadLimit() * 2;
         fitness -= CheckGroupDailyLoadLimit() * 2;
+        fitness -= CheckTeacherSubjectAssignment() * 2;
         
         
         return Math.Max(0,fitness);
@@ -204,6 +205,19 @@ public class Schedule
             }
         }
         return score;
+    }
+
+    private int CheckTeacherSubjectAssignment()
+    {
+        int violations = 0;
+        foreach (var entry in Entries)
+        {
+            if (entry.Teacher != entry.Subject.AssingedTeacher)
+            {
+                violations++;
+            }
+        }
+        return violations;
     }
 
     public Schedule Clone()

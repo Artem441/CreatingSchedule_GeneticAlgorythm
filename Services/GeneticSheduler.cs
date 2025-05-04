@@ -58,6 +58,11 @@ public class GeneticSheduler
             {
                 foreach (var subject in _subjects)
                 {
+                    // Проверяю, есть ли учитель для предмета
+                    if (subject.AssingedTeacher == null)
+                    {
+                        continue;
+                    }
                     for (int j = 0; j < subject.HoursPerWeek; j++)
                     {
                         schedule.Entries.Add(new ScheduleEntry
@@ -135,9 +140,6 @@ public class GeneticSheduler
                 break;
             case 1:
                 entry.Classroom = _classrooms[_random.Next(_classrooms.Count)];
-                break;
-            case 2:
-                entry.Teacher = _teachers[_random.Next(_teachers.Count)];
                 break;
         }
     }

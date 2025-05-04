@@ -7,8 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Generic;
 using System.Windows.Input;
-
-
+using Avalonia.Interactivity;
 
 
 namespace CreatingSchedule.ViewModels;
@@ -23,6 +22,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<ScheduleEntry> ScheduleForSelectedGroup { get; set; } = new(); // для бизнесс логики
     
     public ObservableCollection<ScheduleEntry> Entries { get; set; } = new(); // для табличного отображения в UI
+    
 
     public ObservableCollection<TeacherAssignment> Assignments { get; set; } = new();
     
@@ -63,6 +63,8 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] 
     private double mutationRate = 0.3;
     public ICommand RemoveTeachingAssignmentCommand { get; }
+    
+    public ICommand RemoveClassroomCommand { get; }
     public MainWindowViewModel()
     {
         RemoveTeachingAssignmentCommand = new RelayCommand<TeacherAssignment>(assignment =>
@@ -73,25 +75,66 @@ public partial class MainWindowViewModel : ViewModelBase
                 SyncFromAssignments();
             }
         });
-        // Инициализация по умолчанию(вроде если в меню ничего не указать)
-        for (int i = 1; i <= 10; i++)
+        RemoveClassroomCommand = new RelayCommand<Classroom>(Classroom =>
         {
-            var teacher = new Teacher($"Teacher {i}");
-            Teachers.Add(teacher);
-            Subjects.Add(new Subject($"Subject {i}", 2, teacher));
-        }
-
-        for (int i = 1; i <= 5; i++)
-        {
-            Groups.Add(new Group($"Group {i}"));
-        }
+            if (Classrooms != null)
+            {
+                Classrooms.Remove(Classroom);
+            }
+        });
+        // Инициализация по умолчанию
+        Groups.Add(new Group($"Group {453501}"));
+        Groups.Add(new Group($"Group {453502}"));
+        Groups.Add(new Group($"Group {453503}"));
+        Groups.Add(new Group($"Group {453504}"));
+        Groups.Add(new Group($"Group {453505}"));
+        
+        var teacher = new Teacher("Зоя Николавена"); 
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("МА", 3, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"Мат.Анализ",3));
+        teacher = new Teacher("Олег Иванович");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("ОВА", 2, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"ОВА",2));
+        teacher = new Teacher("Сан-Саныч");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("ФизК", 2, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"ФизК",2));
+        teacher = new Teacher("Егор Геннадьевич");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("ОАиП", 1, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"ОАиП",1));
+        teacher = new Teacher("Игорь Иванович");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("Программирование", 2, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"Программирование",2));
+        teacher = new Teacher("Наталья Евгеньевна");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("БелЯз", 2, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"БелЯз",2));
+        teacher = new Teacher("Александр Васильевич");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("Физика", 2, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"Физика",2));
+        teacher = new Teacher("Татьяна Владимировна");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("ИнЯз", 2, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"ИнЯз",2));
+        teacher = new Teacher("Наталья Геннадьевна");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("ДМ", 2, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"ДМ",2));
+        teacher = new Teacher("Виталий Васильевичк");
+        Teachers.Add(teacher);
+        Subjects.Add(new Subject("К.Ч", 1, teacher));
+        Assignments.Add(new TeacherAssignment(teacher.Name,"К.Ч",1));
 
         for (int i = 1; i <= 10; i++)
         {
             Classrooms.Add(new Classroom($"Classroom {i}"));
         }
         SelectedGroup = Groups.First().Name;
-        //GenerateSchedule(); если поставить то долго открываетсяч приложение
     }
 
     [RelayCommand]
@@ -240,6 +283,13 @@ public partial class MainWindowViewModel : ViewModelBase
         Assignments.Clear();
         SyncFromAssignments();
     }
+
+    [RelayCommand]
+    private void ClearClassroom()
+    {
+        Classrooms.Clear();
+    }
+        
     
     private void SyncFromAssignments()
     {
@@ -255,4 +305,10 @@ public partial class MainWindowViewModel : ViewModelBase
             Subjects.Add(subject);
         }
     }
+    //[RelayCommand]
+   // private void RemoveClassroom(Classroom classroom)
+    //{
+      //  Classrooms.Remove(classroom);
+    //}
+    
 }
