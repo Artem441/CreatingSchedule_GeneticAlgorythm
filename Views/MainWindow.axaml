@@ -3,7 +3,7 @@
         xmlns:vm="clr-namespace:CreatingSchedule.ViewModels;assembly=CreatingSchedule"
         x:Class="CreatingSchedule.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="1200" Height="700"
+        Width="1480" Height="900"
         Background="#1E1E1E" Foreground="White"
         Title="Генератор расписания">
 

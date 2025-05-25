@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CreatingSchedule")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+89c354e8fe872af7e370abe17e294ffd90c9d6b4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ca4686544861a0f4e1ab48ec2df3610ea2681d4b")]
 [assembly: System.Reflection.AssemblyProductAttribute("CreatingSchedule")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CreatingSchedule")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
